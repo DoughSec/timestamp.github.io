@@ -31,42 +31,85 @@
 //   console.log('Your app is listening on port ' + listener.address().port);
 // });
 
-// server.js
+// // server.js
+// const express = require("express");
+// const app = express();
+
+// // Root endpoint
+// app.get("/", (req, res) => {
+//   res.send("Timestamp Microservice is running");
+// });
+
+// // Timestamp API
+// app.get("/api/:date?", (req, res) => {
+//   let dateParam = req.params.date;
+
+//   let date;
+//   if (!dateParam) {
+//     // If no date provided, use current date
+//     date = new Date();
+//   } else {
+//     // If numeric, treat as Unix timestamp
+//     if (!isNaN(dateParam)) {
+//       date = new Date(parseInt(dateParam));
+//     } else {
+//       date = new Date(dateParam);
+//     }
+//   }
+
+//   // Invalid date check
+//   if (date.toString() === "Invalid Date") {
+//     return res.json({ error: "Invalid Date" });
+//   }
+
+//   res.json({
+//     unix: date.getTime(),
+//     utc: date.toUTCString()
+//   });
+// });
+
 const express = require("express");
 const app = express();
 
 // Root endpoint
 app.get("/", (req, res) => {
-  res.send("Timestamp Microservice is running");
+  res.send("Timestamp Microservice");
 });
 
-// Timestamp API
+// Timestamp endpoint
 app.get("/api/:date?", (req, res) => {
-  let dateParam = req.params.date;
-
+  let dateString = req.params.date;
   let date;
-  if (!dateParam) {
-    // If no date provided, use current date
+
+  // If no date is provided, use current date
+  if (!dateString) {
     date = new Date();
   } else {
-    // If numeric, treat as Unix timestamp
-    if (!isNaN(dateParam)) {
-      date = new Date(parseInt(dateParam));
+    // Check if it's a number (Unix timestamp)
+    if (!isNaN(dateString)) {
+      date = new Date(parseInt(dateString));
     } else {
-      date = new Date(dateParam);
+      date = new Date(dateString);
     }
   }
 
-  // Invalid date check
+  // If date is invalid, return error
   if (date.toString() === "Invalid Date") {
     return res.json({ error: "Invalid Date" });
   }
 
+  // Return JSON response
   res.json({
     unix: date.getTime(),
     utc: date.toUTCString()
   });
 });
+
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+
 
 // Export app (for FCC testing)
 module.exports = app;
